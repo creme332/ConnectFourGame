@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdlib.h> //used to clear terminal screen each round
+
 using namespace std;
 
 string board[6][7]; //6 rows 7 columns
@@ -232,7 +234,7 @@ string d2check() { //check along diagonal with positive slope
 }
 
 void output() {
-	cout << endl;
+	system("CLS"); //clear previous board from terminal
 	for (int row = 0;row < 6;row++) {
 		for (int col = 0;col < 7;col++) {
 			cout << board[row][col] << "   ";
@@ -251,11 +253,11 @@ int main() {
 	initialise();
 	bool validinput;
 	
-	while (winner != "Red" && winner != "Yellow" && totalmoves <42) {
+	while (winner != "Red" && winner != "Yellow" && totalmoves < 42) {
 		validinput = 0;
 		while (validinput == 0) {
-			if (turn == 0) {cout << "Red, enter column number (0-6) :" << endl;}
-			else {cout << "Yellow, enter column (0-6) :" << endl;}
+			if (turn == 0) {cout << "Red : Enter column number (0-6) :" << endl;}
+			else {cout << "Yellow : Enter column number (0-6) :" << endl;}
 			cin >> colnum;
 
 			if (nextfree[colnum] >= 0) { //if colnum is valid
