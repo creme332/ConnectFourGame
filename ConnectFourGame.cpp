@@ -7,49 +7,42 @@
 using namespace std;
 
 string board[6][7]; //6 rows 7 columns
-int nextfree[7];//If nextfree[5] = 2, 5th column has next free slot at row 2
-int totalmoves; //If totalmoves = 42, board is full - DRAW
+int nextfree[7];//If nextfree[0] = 2,  coordinates of the next free slot in this column is(2,0)
+//  c0  c1  c2  c3  c4  c5  c6
+//r0 .  .   .   .   .   .   .
+//r1 .  .   .   .   .   .   .
+//r2 .  .   .   .   .   .   .
+//r3 Y  .   .   .   .   .   .
+//r4 R  .   .   .   .   .   .
+//r5 R  .   .   .   .   .   .
+// for this game configuration, nextfree[0]=2 and nextfree[1-6] = 5
 
-void initialise() {
+int totalmoves; //number of rounds played so far. If totalmoves = 42, board is full => DRAW
+
+void initialise() { 	//initialise board
 	totalmoves = 0;
-	//initialise board
 	for (int row = 0;row < 6;row++) {
-		for (int col = 0;col < 7;col++) {
-			board[row][col] = ".";
-		}
+		for (int col = 0;col < 7;col++) {board[row][col] = ".";}
 	}
 	//initialise nextfree to 5
-	for (int i = 0;i < 7;i++) {
-		nextfree[i] = 5;
-	}
+	for (int i = 0;i < 7;i++) {nextfree[i] = 5;}
 }
-string hcheck() {
+string hcheck() {//returns player, if any, who has 4 consecutive tokens horizontally
 	int red, yellow; //counts for red, yellow
-	//start checking from bottom
-
+	//start checking from bottom row
 	for (int row = 5;row > -1;row--) {
-		red = 0;
-		yellow = 0;
+		red = 0; yellow = 0;
 		for (int col = 6;col > -1;col--) {
-			if (board[row][col] == ".") {
-				red = 0;
-				yellow = 0;
-			}
+			if (board[row][col] == ".") {red = 0; yellow = 0;}
 			else {
 				if (board[row][col] == "R") {
-					red++;
-					yellow = 0; //streak of yellow ends 
-					if (red == 4) {
-						return "R";
-					}
+					red++; yellow = 0; //streak of yellow ends 
+					if (red == 4) {return "R";}
 				}
 				else {
 					if (board[row][col] == "Y") {
-						red = 0; //streak of red ends 
-						yellow++;
-						if (yellow == 4) {
-							return "Y";
-						}
+						yellow++; red = 0; //streak of red ends 
+						if (yellow == 4) {return "Y";}
 					}
 				}
 			}
@@ -58,37 +51,25 @@ string hcheck() {
 	}
 	return "no";
 }
-string vcheck() {
+string vcheck() {//returns player, if any, who has 4 consecutive tokens vertically
 	int red, yellow; //counts for red, yellow
-	//start checking from bottom
+
 	for (int col = 0;col < 7;col++) {
-		red = 0;
-		yellow = 0;
+		red = 0; yellow = 0;
 		for (int row = 5;row > -1;row--) {
-			if (board[row][col] == ".") {
-				red = 0;
-				yellow = 0;
-			}
+			if (board[row][col] == ".") {red = 0; yellow = 0;}
 			else {
 				if (board[row][col] == "R") {
-					red++;
-					yellow = 0; //streak of yellow ends 
-					if (red == 4) {
-						return "R";
-					}
+					red++; yellow = 0; //streak of yellow ends 
+					if (red == 4) {return "R";}
 				}
 				else {
 					if (board[row][col] == "Y") {
-						red = 0; //streak of red ends 
-						yellow++;
-						if (yellow == 4) {
-							return "Y";
-						}
+						yellow++; red = 0; //streak of red ends 
+						if (yellow == 4) {return "Y";}
 					}
 				}
 			}
-
-
 		}
 	}
 	return "no";
@@ -99,29 +80,18 @@ string d1check() { //check along diagonal with negative slope
 
 	//startrow = start row for diagonal
 	for (int startrow = 2;startrow > -1;startrow--) {
-		red = 0;
-		yellow = 0;
-		col = 0;
+		red = 0; yellow = 0; col = 0;
 		for (int row = startrow;row < 6;row++) {
-			if (board[row][col] == ".") {
-				red = 0;
-				yellow = 0;
-			}
+			if (board[row][col] == ".") {red = 0; yellow = 0;}
 			else {
 				if (board[row][col] == "R") {
-					red++;
-					yellow = 0; //streak of yellow ends 
-					if (red == 4) {
-						return "R";
-					}
+					red++; yellow = 0; //streak of yellow ends 
+					if (red == 4) {return "R";}
 				}
 				else {
 					if (board[row][col] == "Y") {
-						red = 0; //streak of red ends 
-						yellow++;
-						if (yellow == 4) {
-							return "Y";
-						}
+						yellow++; red = 0; //streak of red ends 
+						if (yellow == 4) {return "Y";}
 					}
 				}
 			}
@@ -131,14 +101,9 @@ string d1check() { //check along diagonal with negative slope
 
 	int row;
 	for (int startcol = 1;startcol < 4;startcol++) {
-		red = 0;
-		yellow = 0;
-		row = 0;
+		red = 0; yellow = 0; row = 0;
 		for (int col = startcol;col < 7;col++) {
-			if (board[row][col] == ".") {
-				red = 0;
-				yellow = 0;
-			}
+			if (board[row][col] == ".") {red = 0; yellow = 0;}
 			else {
 				if (board[row][col] == "R") {
 					red++;
@@ -239,19 +204,15 @@ void output() {
 		for (int col = 0;col < 7;col++) {
 			cout << board[row][col] << "   ";
 		}
-		cout << endl;
-		cout << endl;
+		cout << "\n";
 	}
-	cout << endl;
-
 }
 
 int main() {
 	bool turn=0; //turn 0 for red and turn 1 for yellow
-	int colnum;
-	string winner="";
+	int colnum; string winner=""; bool validinput;
+
 	initialise();
-	bool validinput;
 	
 	while (winner != "Red" && winner != "Yellow" && totalmoves < 42) {
 		validinput = 0;
