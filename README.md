@@ -2,7 +2,7 @@
 A console application for ConnectFour game
 
 To-Do :
-- [ ] Add grid lines to output()
+- [x] Add grid lines to output()
 - [x] Add colours maybe
 - [ ] Vs computer mode - minimax, algorithm
 - [ ] Change data type of board from string to char
