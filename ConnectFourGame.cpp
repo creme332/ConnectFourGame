@@ -1,8 +1,8 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 #include <stdlib.h> //used to clear terminal screen each round
+
 
 using namespace std;
 
@@ -198,25 +198,34 @@ string d2check() { //check along diagonal with positive slope
 	return "no";
 }
 
+string color(string a){ //color character a 
+	if(a=="Y")return "\x1B[33mY\033[0m"; //yellow color
+	if(a=="R")return "\x1B[31mR\033[0m"; //red
+	return "\x1B[92m"+a+"\033[0m"; //cyan
+}
+
 void output() {
 	system("CLS"); //clear previous board from terminal
+	string line = "|---|---|---|---|---|---|---|"; //horizontal line
+	cout << color(line)<<"\n";
 	for (int row = 0;row < 6;row++) {
 		for (int col = 0;col < 7;col++) {
-			cout << board[row][col] << "   ";
+			if(col==0){cout << color("| ")<< color(board[row][col]) << color(" |");}
+			else{cout <<" "<< color(board[row][col]) << color(" |");}
 		}
-		cout << "\n";
+	cout <<"\n" <<color(line)<<"\n";
 	}
 }
+
 
 int main() {
 	bool turn=0; //turn 0 for red and turn 1 for yellow
 	int colnum; string winner=""; bool validinput;
-
 	initialise();
-	
+    output();
 	while (winner != "Red" && winner != "Yellow" && totalmoves < 42) {
 		validinput = 0;
-		while (validinput == 0) {
+		while (validinput == 0) { //must valid coordinates 
 			if (turn == 0) {cout << "Red : Enter column number (0-6) :" << endl;}
 			else {cout << "Yellow : Enter column number (0-6) :" << endl;}
 			cin >> colnum;
