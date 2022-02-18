@@ -251,8 +251,5 @@ int main() {
 
 	if (winner == "") {cout << "DRAW" << endl;}
 	else {cout << winner << " won!" << endl;}
-
-
-
 }
 
