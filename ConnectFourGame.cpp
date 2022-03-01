@@ -24,7 +24,7 @@ int nextfree[7];//If nextfree[0] = 2,  coordinates of the next free slot in this
 void initialise() { 	//initialise board
 	totalmoves = 0;
 	for (int row = 0;row < 6;row++) {
-		for (int col = 0;col < 7;col++) {board[row][col] = ".";}
+		for (int col = 0;col < 7;col++) {board[row][col] = null;}
 	}
 	//initialise nextfree to 5
 	for (int i = 0;i < 7;i++) {nextfree[i] = 5;}
@@ -224,15 +224,16 @@ int minimax(int depth, bool maximizingplayer,int alpha, int beta) {
     //if game over
     if (result == "R")return 100; //AI is maximising player
     if (result == "Y")return -100;
-    if (result == "d")return 0;
+    if (totalmoves == 42)return 0;
 
     int MaxEval = -1000; //max score for maximising player
     int MinEval = 1000; //min score for minimising player
 
-    for (int i = 0;i < 6;i++) {
         for (int j = 0;j < 7;j++) {
-            if (board[i][j] == null) {
-                board[i][j] = maximizingplayer ? R : Y;
+            if (board[nextfree[j]][j] == null) {
+                board[nextfree[j]][j] = maximizingplayer ? R : Y;
+				nextfree[j] --;
+				totalmoves ++;
                 if (maximizingplayer) {
                     MaxEval = max(MaxEval, minimax(depth + 1, 0, alpha, beta) - depth);
                     alpha = max(alpha, MaxEval);
@@ -241,23 +242,24 @@ int minimax(int depth, bool maximizingplayer,int alpha, int beta) {
                     MinEval = min(MinEval, minimax(depth + 1, 1, alpha, beta) + depth);
                     beta = min(beta, MinEval);
                 }
-                board[i][j] = null;
+                board[nextfree[j]][j] = null;
+				nextfree[j] ++;
+				totalmoves --;
                 if (beta <= alpha)break;
             }
         }
-    }
     return maximizingplayer == 1 ? MaxEval : MinEval;
 }
 
-void AImove() { //wrong move
+void AImove() { 
     int p = -1; //best move is to play at column p
     int MaxEval = INT_MIN;
     for (int j = 0;j < 7;j++) {
-        if (nextfree[j]>=0) {//for each possible move
+        if (nextfree[j]>=0) {//possible play
 			board[nextfree[j]][j] = R;
 			nextfree[j] --;
 			totalmoves ++;
-        	int eval = minimax(10, 0, -9999, 9999);
+        	int eval = minimax(0, 0, -9999, 9999); //must start at depth 0
         	if (eval > MaxEval) {//new best move discovered
         		p = j;
             	MaxEval = eval;
