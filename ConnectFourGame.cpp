@@ -9,7 +9,7 @@ const string null = "."; const string R = "R"; const string Y = "Y";
 
 
 string board[6][7]; //6 rows 7 columns
-int totalmoves=0; //number of rounds played so far. If totalmoves = 42, board is full => DRAW
+int totalmoves; //number of rounds played so far. If totalmoves = 42, board is full => DRAW
 int nextfree[7];//If nextfree[0] = 2,  coordinates of the next free slot in this column is(2,0)
 //  c0  c1  c2  c3  c4  c5  c6
 //r0 .  .   .   .   .   .   .
@@ -249,56 +249,74 @@ int minimax(int depth, bool maximizingplayer,int alpha, int beta) {
     return maximizingplayer == 1 ? MaxEval : MinEval;
 }
 
-void AImove() {
-    int p = -1, q = -1; //best move is to play at (p,q)
+void AImove() { //wrong move
+    int p = -1; //best move is to play at column p
     int MaxEval = INT_MIN;
-
-    for (int i = 0;i < 6;i++) {
-        for (int j = 0;j < 7;j++) {
-            if (board[i][j] == null) {//for each possible move
-
-                board[i][j] = R;
-                int eval = minimax(0, 0, -9999, 9999);
-                if (eval > MaxEval) {//new best move discovered
-                    p = i; q = j;
-                    MaxEval = eval;
-                }
-                board[i][j] = null;
-
-            }
+    for (int j = 0;j < 7;j++) {
+        if (nextfree[j]>=0) {//for each possible move
+			board[nextfree[j]][j] = R;
+			nextfree[j] --;
+			totalmoves ++;
+        	int eval = minimax(10, 0, -9999, 9999);
+        	if (eval > MaxEval) {//new best move discovered
+        		p = j;
+            	MaxEval = eval;
+        	}
+			//reset board to its previous state
+			board[nextfree[j]][j] = null;
+			nextfree[j] ++;
+			totalmoves --;
         }
     }
-    board[p][q] = R;
+    
+	board[nextfree[p]][p] = R;
+	nextfree[p]--;		
+	//no need to update totalmoves		
+
 }
 
 
 int main() {
+	bool vsAI = 0;
 	bool turn=0; //turn 0 for red and turn 1 for yellow
 	int colnum; string winner=""; bool validinput;
 	initialise();
     output();
 
 	while (winner != "Red" && winner != "Yellow" && totalmoves < 42) {
-		validinput = 0;
-		while (validinput == 0) { //must valid coordinates 
+
+		if(vsAI){ //1 player mode
+			if(turn==0){//AI's turn - RED
+				AImove();
+			}else{ //Yellow's turn
+				cout << "Yellow : Enter column number (0-6) :" << endl;
+				cin >> colnum;
+				while(colnum < 0 || colnum > 6 || nextfree[colnum] < 0){
+					cout<<"Enter again.\n";
+					cin >> colnum;
+				}
+				board[nextfree[colnum]][colnum] = "Y";
+				nextfree[colnum]--;				
+			}
+		}
+		else{ //2 player mode
 			if (turn == 0) {cout << "Red : Enter column number (0-6) :" << endl;}
 			else {cout << "Yellow : Enter column number (0-6) :" << endl;}
 			cin >> colnum;
-
-			if (nextfree[colnum] >= 0) { //if colnum is valid
-				validinput = 1;
-				if (turn == 0) { board[nextfree[colnum]][colnum] = "R"; }
-				else { board[nextfree[colnum]][colnum] = "Y"; }
-				totalmoves++;
-				nextfree[colnum]--;
-				output();
-				turn = !turn;
-				
-				string state=  GameState();
-				if(state==R)winner="Red";
-				if(state==Y)winner="Yellow";
+			while(colnum < 0 || colnum > 6 || nextfree[colnum] < 0){
+				cout<<"Enter again.\n";
+				cin >> colnum;
 			}
+		    board[nextfree[colnum]][colnum] = (turn==0)? "R":"Y";
+			nextfree[colnum]--;
 		}
+
+		output();
+		turn = !turn;
+		string state=  GameState();
+		if(state==R)winner="Red";
+		if(state==Y)winner="Yellow";
+		totalmoves++;
 	}
 
 	if (winner == "") {cout << "DRAW" << endl;}
