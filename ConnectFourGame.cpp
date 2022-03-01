@@ -5,8 +5,11 @@
 
 
 using namespace std;
+const string null = "."; const string R = "R"; const string Y = "Y";
+
 
 string board[6][7]; //6 rows 7 columns
+int totalmoves=0; //number of rounds played so far. If totalmoves = 42, board is full => DRAW
 int nextfree[7];//If nextfree[0] = 2,  coordinates of the next free slot in this column is(2,0)
 //  c0  c1  c2  c3  c4  c5  c6
 //r0 .  .   .   .   .   .   .
@@ -17,7 +20,6 @@ int nextfree[7];//If nextfree[0] = 2,  coordinates of the next free slot in this
 //r5 R  .   .   .   .   .   .
 // for this game configuration, nextfree[0]=2 and nextfree[1-6] = 5
 
-int totalmoves; //number of rounds played so far. If totalmoves = 42, board is full => DRAW
 
 void initialise() { 	//initialise board
 	totalmoves = 0;
@@ -144,17 +146,13 @@ string d2check() { //check along diagonal with positive slope
 				if (board[row][col] == "R") {
 					red++;
 					yellow = 0; //streak of yellow ends 
-					if (red == 4) {
-						return "R";
-					}
+					if (red == 4) {return "R";}
 				}
 				else {
 					if (board[row][col] == "Y") {
 						red = 0; //streak of red ends 
 						yellow++;
-						if (yellow == 4) {
-							return "Y";
-						}
+						if (yellow == 4) {return "Y";}
 					}
 				}
 			}
@@ -177,17 +175,13 @@ string d2check() { //check along diagonal with positive slope
 				if (board[row][col] == "R") {
 					red++;
 					yellow = 0; //streak of yellow ends 
-					if (red == 4) {
-						return "R";
-					}
+					if (red == 4) {return "R";}
 				}
 				else {
 					if (board[row][col] == "Y") {
 						red = 0; //streak of red ends 
 						yellow++;
-						if (yellow == 4) {
-							return "Y";
-						}
+						if (yellow == 4) {return "Y";}
 					}
 				}
 			}
@@ -203,7 +197,6 @@ string color(string a){ //color character a
 	if(a=="R")return "\x1B[31mR\033[0m"; //red
 	return "\x1B[92m"+a+"\033[0m"; //cyan
 }
-
 void output() {
 	system("CLS"); //clear previous board from terminal
 	string line = "|---|---|---|---|---|---|---|"; //horizontal line
@@ -217,12 +210,74 @@ void output() {
 	}
 }
 
+string GameState(){
+	if (hcheck() == R || vcheck() == R || d1check() == R || d2check() == R) {
+		return R;
+	}
+	if (hcheck() == Y || vcheck() == Y || d1check() == Y || d2check() == Y) {
+		return Y;
+	}
+	return "no winner yet";
+}
+int minimax(int depth, bool maximizingplayer,int alpha, int beta) {
+    string result = GameState();
+    //if game over
+    if (result == "R")return 100; //AI is maximising player
+    if (result == "Y")return -100;
+    if (result == "d")return 0;
+
+    int MaxEval = -1000; //max score for maximising player
+    int MinEval = 1000; //min score for minimising player
+
+    for (int i = 0;i < 6;i++) {
+        for (int j = 0;j < 7;j++) {
+            if (board[i][j] == null) {
+                board[i][j] = maximizingplayer ? R : Y;
+                if (maximizingplayer) {
+                    MaxEval = max(MaxEval, minimax(depth + 1, 0, alpha, beta) - depth);
+                    alpha = max(alpha, MaxEval);
+                }
+                else {
+                    MinEval = min(MinEval, minimax(depth + 1, 1, alpha, beta) + depth);
+                    beta = min(beta, MinEval);
+                }
+                board[i][j] = null;
+                if (beta <= alpha)break;
+            }
+        }
+    }
+    return maximizingplayer == 1 ? MaxEval : MinEval;
+}
+
+void AImove() {
+    int p = -1, q = -1; //best move is to play at (p,q)
+    int MaxEval = INT_MIN;
+
+    for (int i = 0;i < 6;i++) {
+        for (int j = 0;j < 7;j++) {
+            if (board[i][j] == null) {//for each possible move
+
+                board[i][j] = R;
+                int eval = minimax(0, 0, -9999, 9999);
+                if (eval > MaxEval) {//new best move discovered
+                    p = i; q = j;
+                    MaxEval = eval;
+                }
+                board[i][j] = null;
+
+            }
+        }
+    }
+    board[p][q] = R;
+}
+
 
 int main() {
 	bool turn=0; //turn 0 for red and turn 1 for yellow
 	int colnum; string winner=""; bool validinput;
 	initialise();
     output();
+
 	while (winner != "Red" && winner != "Yellow" && totalmoves < 42) {
 		validinput = 0;
 		while (validinput == 0) { //must valid coordinates 
@@ -238,13 +293,10 @@ int main() {
 				nextfree[colnum]--;
 				output();
 				turn = !turn;
-
-				if (hcheck() == "R" || vcheck() == "R" || d1check() == "R" || d2check() == "R") {
-					winner = "Red";
-				}
-				if (hcheck() == "Y" || vcheck() == "Y" || d1check() == "Y" || d2check() == "Y") {
-					winner = "Yellow";
-				}
+				
+				string state=  GameState();
+				if(state==R)winner="Red";
+				if(state==Y)winner="Yellow";
 			}
 		}
 	}
