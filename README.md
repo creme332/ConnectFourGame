@@ -1,4 +1,6 @@
 # ConnectFourGame
+![image](https://user-images.githubusercontent.com/65414576/156174905-646b3dd3-8cde-4dd2-9fb3-e2f8e4d8d9fb.png)
+
 A console application for ConnectFour game
 
 To-Do :
