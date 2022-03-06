@@ -222,8 +222,8 @@ string GameState(){
 int minimax(int depth, bool maximizingplayer,int alpha, int beta) {
     string result = GameState();
     //if game over
-    if (result == "R")return 100; //AI is maximising player
-    if (result == "Y")return -100;
+    if (result == R)return 100; //AI is maximising player
+    if (result == Y)return -100;
     if (totalmoves == 42)return 0;
 
     int MaxEval = -1000; //max score for maximising player
@@ -255,7 +255,7 @@ void AImove() {
     int p = -1; //best move is to play at column p
     int MaxEval = INT_MIN;
     for (int j = 0;j < 7;j++) {
-        if (nextfree[j]>=0) {//possible play
+        if (nextfree[j]>=0) {// column is not full
 			board[nextfree[j]][j] = R;
 			nextfree[j] --;
 			totalmoves ++;
@@ -279,8 +279,8 @@ void AImove() {
 
 
 int main() {
-	bool vsAI = 0;
-	bool turn=0; //turn 0 for red and turn 1 for yellow
+	bool vsAI = 1;
+	bool turn=1; //turn 0 for red and turn 1 for yellow
 	int colnum; string winner=""; bool validinput;
 	initialise();
     output();
