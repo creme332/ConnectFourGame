@@ -1,7 +1,6 @@
 #include "Game.h"
-#pragma once
-
 int main(){
-    Game NewGame();
-
+    Game MyGame;
+    MyGame.InitialiseTerminal();
+    
 }
