@@ -5,8 +5,10 @@
 Run the code in the `CurrentWorkingCode` folder on a compiler.
 
 # To-Do #
-- [ ] Use an object-oriented approach (work in progress)
+- [ ] Use an object-oriented approach 
+- [ ] Use double buffering to update board
+- [ ] Add a gif for gameplay
 - [ ] Implement computer mode - minimax algorithm (work in progress)
 - [ ] Trace winning move (the 4 adjacent identical letters that gave the win). When checking for winner, save coordinates in a vector/map
 - [ ] Change data type of board from string to char
-- [ ] Futher optimisation when checking for winners
+- [ ] Optimise code for checking winners
