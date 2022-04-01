@@ -11,6 +11,7 @@ const string null = "."; const string R = "R"; const string Y = "Y";
 string board[6][7]; //6 rows 7 columns
 int totalmoves; //number of rounds played so far. If totalmoves = 42, board is full => DRAW
 int nextfree[7];//If nextfree[0] = 2,  coordinates of the next free slot in this column is(2,0)
+
 //  c0  c1  c2  c3  c4  c5  c6
 //r0 .  .   .   .   .   .   .
 //r1 .  .   .   .   .   .   .
@@ -279,7 +280,7 @@ void AImove() {
 
 
 int main() {
-	bool vsAI = 1;
+	bool vsAI = 0;
 	bool turn=1; //turn 0 for red and turn 1 for yellow
 	int colnum; string winner=""; bool validinput;
 	initialise();
